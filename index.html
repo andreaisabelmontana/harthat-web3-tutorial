@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Smart-Contract Dev Tutorial — Built From Scratch</title>
+<meta name="description" content="An original from-scratch build: a beginner-friendly walkthrough for writing, compiling, deploying and calling a Solidity smart contract on a local Ethereum chain using Hardhat and a Python client." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --accent:#b45309; --accent-soft:#f7ecdd; --ink:#16201f; --muted:#5d6b69;
+    --line:#dfe5e3; --bg:#fbfcfb; --card:#ffffff;
+    --serif:'Fraunces',Georgia,serif; --sans:'Inter',system-ui,sans-serif; --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.65;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:860px;margin:0 auto;padding:0 28px}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  code{font-family:var(--mono);font-size:.86em;background:var(--accent-soft);padding:.1em .4em;border-radius:4px;color:#92400e}
+  h1,h2,h3{font-family:var(--serif);font-weight:500;line-height:1.15;letter-spacing:-.01em}
+  /* Header */
+  header.hero{padding:88px 0 56px;border-bottom:1px solid var(--line)}
+  .eyebrow{font-family:var(--mono);font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin:0 0 22px}
+  h1{font-size:clamp(2.6rem,6vw,4.1rem);margin:0 0 18px}
+  .lede{font-size:1.22rem;color:var(--muted);max-width:62ch;margin:0 0 28px}
+  .meta{display:flex;flex-wrap:wrap;gap:10px;font-size:.82rem}
+  .chip{font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;border:1px solid var(--line);border-radius:999px;padding:5px 12px;color:var(--muted);background:var(--card)}
+  /* Sections */
+  section{padding:54px 0;border-bottom:1px solid var(--line)}
+  .kicker{font-family:var(--mono);font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin:0 0 14px}
+  h2{font-size:clamp(1.7rem,3.4vw,2.3rem);margin:0 0 20px}
+  h3{font-size:1.2rem;margin:0 0 6px}
+  p{margin:0 0 18px;max-width:68ch}
+  .muted{color:var(--muted)}
+  /* Stack grid */
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:8px}
+  .tool{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
+  .tool .t{font-family:var(--mono);font-size:.78rem;color:var(--accent);letter-spacing:.04em;margin-bottom:8px}
+  .tool h3{font-size:1.05rem;font-family:var(--sans);font-weight:600;margin-bottom:6px}
+  .tool p{font-size:.92rem;color:var(--muted);margin:0}
+  /* Pipeline / modules */
+  ol.flow{counter-reset:s;list-style:none;padding:0;margin:24px 0 0}
+  ol.flow li{position:relative;padding:18px 0 18px 56px;border-top:1px solid var(--line)}
+  ol.flow li:before{counter-increment:s;content:counter(s,decimal-leading-zero);position:absolute;left:0;top:18px;font-family:var(--mono);font-size:.8rem;color:var(--accent);border:1px solid var(--line);border-radius:8px;width:38px;height:38px;display:grid;place-items:center;background:var(--card)}
+  ol.flow li h3{font-family:var(--sans);font-size:1.02rem;font-weight:600;margin:0 0 4px}
+  ol.flow li p{margin:0;font-size:.93rem;color:var(--muted)}
+  .tag{display:inline-block;font-family:var(--mono);font-size:.68rem;padding:2px 7px;border-radius:5px;margin-left:8px;vertical-align:middle}
+  .tag.on{background:#e6f7ec;color:#1c7a43}
+  .tag.off{background:#fdecea;color:#b23b2c}
+  /* Callout */
+  .callout{background:var(--accent-soft);border:1px solid #ebd6b8;border-radius:14px;padding:24px 26px;margin-top:8px}
+  .callout p:last-child{margin:0}
+  /* Reflection list */
+  ul.learn{list-style:none;padding:0;margin:8px 0 0}
+  ul.learn li{padding:14px 0 14px 30px;border-top:1px solid var(--line);position:relative;color:var(--muted);max-width:68ch}
+  ul.learn li:before{content:"→";position:absolute;left:0;color:var(--accent);font-family:var(--mono)}
+  ul.learn li b{color:var(--ink);font-weight:600}
+  /* Footer */
+  footer{padding:48px 0 80px}
+  .credit{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px}
+  .credit .k{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+  footer .fine{font-size:.8rem;color:var(--muted);margin-top:22px;text-align:center}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">From-Scratch Build · Web3</p>
+    <h1>Smart-Contract Dev Tutorial</h1>
+    <p class="lede">A beginner-friendly walkthrough for writing a Solidity smart contract, compiling and deploying it to a local Ethereum chain, and then calling it from Python — every step runs on my own machine with no real money involved. Rebuilt from scratch to learn the end-to-end blockchain developer workflow.</p>
+    <div class="meta">
+      <span class="chip">Solidity</span><span class="chip">Hardhat</span><span class="chip">Local chain</span>
+      <span class="chip">web3.py</span><span class="chip">ABI · events</span>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">What it is</p>
+    <h2>A contract, a chain, and a client — all local</h2>
+    <p>A <b>smart contract</b> is a small program that lives on a blockchain: anyone can call its functions, and its stored data is shared and tamper-resistant. This build is a complete, step-by-step tutorial that takes a tiny example contract from source code to a running, callable program — entirely on a private blockchain running on my laptop, so there is no cost and nothing to lose while learning.</p>
+    <p>The example contract is deliberately minimal: a public counter you can increment, a function that emits a log message, a read-only getter, and one function that always fails on purpose. That last one matters — it lets the tutorial show how a contract <i>rejects</i> an invalid call, not just how the happy path works.</p>
+    <div class="callout">
+      <p><b>The core idea I wanted to learn:</b> deploying a contract produces two artifacts that matter — an <i>address</i> (where it lives) and an <i>ABI</i> (the description of how to call it). Hand those to any client, in any language, and it can talk to the contract. The blockchain is just the runtime.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">The stack</p>
+    <h2>Tools under the hood</h2>
+    <p class="muted">The point of this rebuild was the toolchain a blockchain developer actually uses. Here is what each piece does.</p>
+    <div class="grid">
+      <div class="tool"><div class="t">contract</div><h3>Solidity</h3><p>The language smart contracts are written in. The example holds a counter and a couple of functions, compiled down to bytecode the chain can run.</p></div>
+      <div class="tool"><div class="t">toolkit</div><h3>Hardhat</h3><p>The development environment that compiles the contract, manages network settings and runs a deploy script — the command centre of the project.</p></div>
+      <div class="tool"><div class="t">local chain</div><h3>Local Ethereum node</h3><p>A private blockchain running on the machine, pre-funded with test accounts so deploying and transacting cost nothing real.</p></div>
+      <div class="tool"><div class="t">interface</div><h3>ABI</h3><p>The Application Binary Interface — a JSON description of the contract's functions and events that any client reads to know how to call it.</p></div>
+      <div class="tool"><div class="t">client</div><h3>web3.py</h3><p>A Python library that connects to the chain, reads contract values, signs and sends transactions, and decodes the events that come back.</p></div>
+      <div class="tool"><div class="t">events</div><h3>Logs &amp; reverts</h3><p>Contracts emit events when state changes and revert when a rule is broken. The tutorial reads both, so success and failure are visible.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">Architecture</p>
+    <h2>The workflow, step by step</h2>
+    <p>The tutorial is a pipeline: source code in one end, a live contract you can poke from Python out the other. Most of it is local; the public-testnet path I left as a clearly-marked next step.</p>
+    <ol class="flow">
+      <li><h3>Write the contract <span class="tag on">built</span></h3><p>A short Solidity file with a counter, an increment, an event emitter, a getter and a deliberate failure.</p></li>
+      <li><h3>Compile <span class="tag on">built</span></h3><p>The toolkit turns the source into bytecode plus an ABI, the two things every later step depends on.</p></li>
+      <li><h3>Run a local chain <span class="tag on">built</span></h3><p>Start a private Ethereum node with funded test accounts so deployment and transactions are free.</p></li>
+      <li><h3>Deploy <span class="tag on">built</span></h3><p>A script pushes the contract onto the chain and saves its address and ABI to files for the client to read.</p></li>
+      <li><h3>Call from Python <span class="tag on">built</span></h3><p>A web3.py script reads the counter, sends a signed increment transaction, decodes the event, and catches the intentional revert.</p></li>
+      <li><h3>Deploy to a public testnet <span class="tag off">future</span></h3><p>The same flow against a shared test network with real RPC and key handling. Configured but left as future work in this build.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">How it runs</p>
+    <h2>From source to a signed transaction</h2>
+    <p>The end-to-end loop is what makes it click — the contract and the client are separate programs that meet over the chain:</p>
+    <ul class="learn">
+      <li><b>Read:</b> the Python client calls the getter and the public counter with no transaction and no cost — just a query.</li>
+      <li><b>Write:</b> incrementing the counter is a real transaction — built, signed with a test key, broadcast, and confirmed in a block.</li>
+      <li><b>Observe:</b> the client decodes the event the contract emitted, then deliberately triggers the always-failing function to watch the chain reject it.</li>
+    </ul>
+    <p class="muted" style="margin-top:18px">In my rebuild I focused on the fully-local loop: compile, spin up the private chain, deploy, then run the Python client end to end so I could see a read, a signed write, a decoded event and a clean revert all in one run.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">Reflection</p>
+    <h2>What rebuilding it taught me</h2>
+    <ul class="learn">
+      <li><b>Address plus ABI is the whole interface.</b> Once a contract is deployed, any client that has those two things can call it — the language on the client side does not matter.</li>
+      <li><b>Reads are free, writes are transactions.</b> Querying state costs nothing, but changing it means building, signing and broadcasting a transaction that has to be mined into a block.</li>
+      <li><b>A local chain removes all the fear.</b> Funded test accounts and a private node mean you can deploy a hundred broken contracts and lose nothing — the best way to actually learn.</li>
+      <li><b>Failure is a feature.</b> Watching the contract revert a forbidden call taught me more than any successful transaction — that is where the safety guarantees live.</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="credit">
+      <div class="k">About this build</div>
+      <p style="margin:0">An original, from-scratch build by <b>Andrea</b> — written to learn the end-to-end smart-contract workflow: writing Solidity, deploying to a local chain, and calling it from Python. Plain HTML/CSS for this showcase page, deployed on GitHub Pages.</p>
+    </div>
+    <p class="fine">Built from scratch by Andrea · one of an ongoing series of learning builds.</p>
+  </div>
+</footer>
+</body>
+</html>
